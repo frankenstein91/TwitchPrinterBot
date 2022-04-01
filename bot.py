@@ -10,6 +10,10 @@ from sqlalchemy import *
 from sqlalchemy.orm import *
 from sqlalchemy.ext.declarative import declarative_base
 
+import PIL.Image
+import PIL.ImageDraw
+import PIL.ImageFont
+
 Base = declarative_base()
 Session = sessionmaker()
 
@@ -66,6 +70,14 @@ def signal_handler(signal, frame):
     logging.info("will stop as soon as possible")
     global interrupted
     interrupted = True
+
+
+#render text to a black and white bmp
+def BitmapFromText(text, font, height, width=400):
+    img = PIL.Image.new("1", (width, height), "white")
+    draw = PIL.ImageDraw.Draw(img)
+    draw.text((0, 0), text, font=font, fill="black")
+    return img
 
 
 signal.signal(signal.SIGINT, signal_handler)

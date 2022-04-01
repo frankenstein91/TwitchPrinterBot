@@ -161,3 +161,7 @@ if __name__ == "__main__":
         if len(data) > 0:
             for line in data.splitlines():
                 logging.debug(f"received data from twitch.tv: {line}")
+                if line.startswith("PING"):
+                    sock.send(f"PONG {line.split()[1]}\r\n".encode())
+                    logging.debug(f"answer to twitch.tv ping: {line.split()[1]}")
+

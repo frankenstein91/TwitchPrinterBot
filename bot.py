@@ -1,4 +1,4 @@
-#!/bin/env python3 
+#!/bin/env python3
 import inspect
 import logging
 import argparse
@@ -9,71 +9,108 @@ from time import sleep
 from sqlalchemy import *
 from sqlalchemy.orm import *
 from sqlalchemy.ext.declarative import declarative_base
+
 Base = declarative_base()
 Session = sessionmaker()
 
 # user table
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
+
     def __repr__(self):
-        return "<User(name='%s', email='%s', password='%s')>" % (self.name, self.email, self.password)
+        return "<User(name='%s', email='%s', password='%s')>" % (
+            self.name,
+            self.email,
+            self.password,
+        )
+
 
 # message table
 class Message(Base):
-    __tablename__ = 'messages'
+    __tablename__ = "messages"
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column(Integer, ForeignKey("users.id"))
     message = Column(String(500))
     printed = Column(Boolean)
     blocked = Column(Boolean)
+
     def __repr__(self):
         return "<Message(user_id='%s', message='%s')>" % (self.user_id, self.message)
 
+
 # badword table
 class Badword(Base):
-    __tablename__ = 'badwords'
+    __tablename__ = "badwords"
     id = Column(Integer, primary_key=True)
     word = Column(String(50))
+
     def __repr__(self):
         return "<Badword(word='%s')>" % (self.word)
 
+
 # statistics table
 class Statistic(Base):
-    __tablename__ = 'statistics'
+    __tablename__ = "statistics"
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
     value = Column(Integer)
+
     def __repr__(self):
         return "<Statistic(name='%s', value='%s')>" % (self.name, self.value)
 
+
 def signal_handler(signal, frame):
-    logging.info('You pressed Ctrl+C!')
+    logging.info("You pressed Ctrl+C!")
     logging.info("will stop as soon as possible")
     global interrupted
     interrupted = True
+
 
 signal.signal(signal.SIGINT, signal_handler)
 interrupted = False
 
 if __name__ == "__main__":
     # parse arguments
-    parser = argparse.ArgumentParser(description='A twitch bot that prints messages from a channel to a cat printer', prog="bot.py", formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=30))
-    parser.add_argument('-l', '--log', help='log level', default='INFO', choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'])
-    parser.add_argument('-t', '--tigger', help='tigger word for printing (after !)', default='print')
+    parser = argparse.ArgumentParser(
+        description="A twitch bot that prints messages from a channel to a cat printer",
+        prog="bot.py",
+        formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=30),
+    )
+    parser.add_argument(
+        "-l",
+        "--log",
+        help="log level",
+        default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+    )
+    parser.add_argument(
+        "-t", "--tigger", help="tigger word for printing (after !)", default="print"
+    )
     # get SQLAlchemy connection string
-    parser.add_argument('-c', '--connection', help='SQLAlchemy connection string', default='sqlite:///PrintBot.db')
+    parser.add_argument(
+        "-c",
+        "--connection",
+        help="SQLAlchemy connection string",
+        default="sqlite:///PrintBot.db",
+    )
     # make a arg group for the twitch.tv para
-    group = parser.add_argument_group('Twitch.tv')
-    group.add_argument('-u', '--username', help='Twitch.tv username', required=True, type=str)
-    group.add_argument('-T', '--token', help='Twitch.tv token', required=True, type=str)
-    group.add_argument("--ircchannel", help="IRC channel to join", required=True, type=str)
+    group = parser.add_argument_group("Twitch.tv")
+    group.add_argument(
+        "-u", "--username", help="Twitch.tv username", required=True, type=str
+    )
+    group.add_argument("-T", "--token", help="Twitch.tv token", required=True, type=str)
+    group.add_argument(
+        "--ircchannel", help="IRC channel to join", required=True, type=str
+    )
     group.add_argument("--ircserver", help="IRC server", default="irc.chat.twitch.tv")
     group.add_argument("--ircport", help="IRC port", default=6667)
     args = parser.parse_args()
     # set up logging
-    logging.basicConfig(level=args.log.upper(), format='%(asctime)s %(levelname)s %(message)s')
+    logging.basicConfig(
+        level=args.log.upper(), format="%(asctime)s %(levelname)s %(message)s"
+    )
     # set up SQLAlchemy
     logging.info(f"Connecting to {args.connection}")
     logging.debug(f"try to create engine with {args.connection}")
@@ -95,7 +132,9 @@ if __name__ == "__main__":
         exit(1)
     # connect to twitch.tv
     logging.info("connect to twitch.tv")
-    logging.debug(f"try to connect to ircserver {args.ircserver}:{args.ircport} with username {args.username} on channel {args.ircchannel}")
+    logging.debug(
+        f"try to connect to ircserver {args.ircserver}:{args.ircport} with username {args.username} on channel {args.ircchannel}"
+    )
     try:
         sock = socket()
         sock.connect((args.ircserver, args.ircport))
@@ -122,5 +161,3 @@ if __name__ == "__main__":
         if len(data) > 0:
             for line in data.splitlines():
                 logging.debug(f"received data from twitch.tv: {line}")
-    
-    

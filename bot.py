@@ -106,6 +106,9 @@ if __name__ == "__main__":
     )
     group.add_argument("--ircserver", help="IRC server", default="irc.chat.twitch.tv")
     group.add_argument("--ircport", help="IRC port", default=6667)
+    # make a arg group for the printer para
+    group = parser.add_argument_group("🐱Printer")
+    group.add_argument("-D", "--devidename", help="BLE Device name", type=str, default="GT01")
     args = parser.parse_args()
     # set up logging
     logging.basicConfig(

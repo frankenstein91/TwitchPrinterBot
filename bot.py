@@ -33,8 +33,8 @@ class Message(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     message = Column(String(500))
-    printed = Column(Boolean)
-    blocked = Column(Boolean)
+    printed = Column(Boolean, default=False)
+    blocked = Column(Boolean, default=False)
 
     def __repr__(self):
         return "<Message(user_id='%s', message='%s')>" % (self.user_id, self.message)

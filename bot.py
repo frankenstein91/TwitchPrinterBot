@@ -153,7 +153,7 @@ if __name__ == "__main__":
             sock.close()
             break
         try:
-            data = sock.recv(2048).decode()
+            data = sock.recv(2048).decode() # receive data from twitch.tv
         except Exception as e:
             logging.error("failed to receive data from twitch.tv")
             logging.error(e)

@@ -76,7 +76,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="A twitch bot that prints messages from a channel to a cat printer",
         prog="bot.py",
-        formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=30),
+        formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=50),
     )
     parser.add_argument(
         "-l",
